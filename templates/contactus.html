@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin: 50px;">
+    <h1>Contact Us</h1>
+    <p>If you have any questions, feel free to reach out to us:</p>
+    <div style="margin: 20px;">
+        <p><strong>Email:</strong> daggumativenkatasumanth508@gmail.com</p>
+        <p><strong>Phone:</strong>7842909856</p>
+        <p><strong>Address:</strong> Andhra pradesh,Nellore</p>
+    </div>
+    <form action="/contactus" method="post" style="max-width: 500px; margin: 0 auto; text-align: left;">
+        <div style="margin-bottom: 15px;">
+            <label for="name" style="display: block; margin-bottom: 5px;">Name:</label>
+            <input type="text" id="name" name="name" style="width: 100%; padding: 10px;" required>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="email" style="display: block; margin-bottom: 5px;">Email:</label>
+            <input type="email" id="email" name="email" style="width: 100%; padding: 10px;" required>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="message" style="display: block; margin-bottom: 5px;">Message:</label>
+            <textarea id="message" name="message" rows="5" style="width: 100%; padding: 10px;" required></textarea>
+        </div>
+        <button type="submit" style="padding: 10px 20px; background-color:#007BFF;; color: white; border: none; cursor: pointer;">Send Message</button>
+    </form>
+</div>
+{% endblock %}

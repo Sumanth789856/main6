@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crop Prediction</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <h2>Predict the Best Crop</h2>
+    
+    <form method="POST">
+        <input type="number" name="n" placeholder="Nitrogen" required>
+        <input type="number" name="p" placeholder="Phosphorous" required>
+        <input type="number" name="k" placeholder="Potassium" required>
+        <input type="number" name="temperature" placeholder="Temperature (°C)" required>
+        <input type="number" name="humidity" placeholder="Humidity (%)" required>
+        <input type="number" name="ph" placeholder="pH Level" required>
+        <input type="number" name="rainfall" placeholder="Rainfall (mm)" required>
+        <button type="submit">Predict</button>
+    </form>
+</body>
+</html>
+{% endblock %}

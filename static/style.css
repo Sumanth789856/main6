@@ -1,0 +1,478 @@
+
+/* Post Form */
+.post-box form {
+    display: flex;
+    flex-direction: column;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-box textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    resize: none;
+}
+
+.post-box input[type="file"] {
+    margin-top: 10px;
+}
+
+.post-box button {
+    background-color: #1877f2;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.post-box button:hover {
+    background-color: #145dbf;
+}
+
+/* Posts Section */
+.posts {
+    width: 50%;
+}
+
+.post {
+    background: white;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.post-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.post-info span {
+    color: gray;
+    font-size: 12px;
+}
+
+.post-content {
+    margin: 10px 0;
+}
+
+.post-img {
+    max-width: 100%;  /* Ensures the image doesn’t overflow */
+    height: auto;  /* Keeps aspect ratio */
+    border-radius: 10px;
+    margin-top: 10px;
+    display: block;
+    object-fit: contain; /* Ensures it fits without distortion */
+}
+
+
+/* Like & Comment Section */
+.post-actions {
+    margin-top: 10px;
+}
+
+.post-actions a {
+    text-decoration: none;
+    color: #555;
+    margin-right: 15px;
+    font-size: 14px;
+}
+
+.post-actions a:hover {
+    color: #1877f2;
+}
+
+
+
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    text-align: center;
+}
+
+/* Interactive Navigation Bar */
+nav {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+}
+
+/* Hover Effect */
+nav a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+/* Underline Animation */
+nav a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: white;
+    transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+    width: 100%;
+}
+
+/* Active Link Styling */
+nav a.active {
+    background-color: rgba(255, 255, 255, 0.3);
+    font-weight: 600;
+}
+
+/* Logo/Brand Styling */
+.nav-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Mobile Menu Button (hidden by default) */
+.menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        padding: 1rem 0;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    nav a {
+        width: 100%;
+        text-align: center;
+        padding: 0.8rem;
+    }
+
+    .menu-btn {
+        display: block;
+    }
+
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Dropdown Menu */
+.nav-dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 200px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    z-index: 1;
+    top: 100%;
+    left: 0;
+}
+
+.nav-dropdown:hover .dropdown-content {
+    display: block;
+    animation: fadeIn 0.3s;
+}
+
+.dropdown-content a {
+    color: #333;
+    padding: 12px 16px;
+    display: block;
+    transition: background-color 0.2s;
+}
+
+.dropdown-content a:hover {
+    background-color: #f8f9fa;
+    color: #007bff;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Main content */
+main {
+    padding: 20px;
+}
+
+
+form {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    border: 2px solid #ddd;
+    padding: 20px 40px 20px 20px;
+    border-radius: 5px;
+    width: 300px;
+    margin: 30px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    
+}
+
+
+form label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+    width: 100=0%;
+}
+
+form input, form button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    
+}
+
+form button {
+    background-color: hsl(209, 100%, 50%);
+    color: white;
+    border: none;
+    width: 321px;
+    font-size: 1em;
+    cursor: pointer;
+    padding: 10px;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+p {
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+    margin-top: 10px;
+}
+
+p a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease-in-out;
+}
+
+p a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}  
+
+
+
+/* Result page */
+.result {
+    background: white;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 600px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+/* Upload Container */
+
+/* Interactive Results Styling */
+.result-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.analysis-card {
+    background: white;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    border-radius: 10px;
+    border-left: 4px solid #007BFF;
+    transition: transform 0.2s;
+}
+
+.analysis-card:hover {
+    transform: translateY(-3px);
+}
+
+.disease-card.warning {
+    border-color: #ffc107;
+    background: #fff3cd;
+}
+
+.card-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.recommendation-list {
+    list-style-type: '→ ';
+    padding-left: 1.5rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.retry-btn {
+    background: #007BFF;
+    color: white;
+}
+
+.share-btn {
+    background: #28a745;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
+
+.uploaded-image {
+    max-height: 300px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+/* landing page*/
+.landing-container, .login-container, .register-container, .main-container {
+    text-align: center;
+    background-color: #20cde08a;
+    margin-top: 5px;
+}
+
+
+.landing-container {
+padding: 150px;
+animation: fadeIn 1.5s ease-in-out;
+}
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(-20px); }
+to { opacity: 1; transform: translateY(0); }
+}
+button {
+padding: 10px 20px;
+font-size: 16px;
+border: none;
+border-radius: 5px;
+background-color: #28a745;
+color: white;
+cursor: pointer;
+transition: background-color 0.3s ease, transform 0.2s ease;
+}
+button:hover {
+background-color: #218838;
+transform: scale(1.1);
+}
+.services {
+margin-top: 40px;
+}
+.service-cards {
+display: flex;
+justify-content: center;
+gap: 20px;
+flex-wrap: wrap;
+}
+.card {
+background: white;
+padding: 20px;
+border-radius: 10px;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+width: 250px;
+text-align: center;
+}
+.card:hover {
+transform: translateY(-10px);
+box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+.card img {
+width: 100px;
+height: 100px;
+margin-bottom: 10px;
+}
+

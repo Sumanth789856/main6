@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+ 
+</head>
+<body>
+       <link rel="stylesheet" href="{{ url_for('static', filename='community.css') }}">
+<style>
+ /* Navigation bar */
+/* Interactive Navigation Bar */
+nav {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+}
+
+/* Hover Effect */
+nav a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+/* Underline Animation */
+nav a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: white;
+    transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+    width: 100%;
+}
+
+/* Active Link Styling */
+nav a.active {
+    background-color: rgba(255, 255, 255, 0.3);
+    font-weight: 600;
+}
+
+/* Logo/Brand Styling */
+.nav-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Mobile Menu Button (hidden by default) */
+.menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        padding: 1rem 0;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    nav a {
+        width: 100%;
+        text-align: center;
+        padding: 0.8rem;
+    }
+
+    .menu-btn {
+        display: block;
+    }
+
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Dropdown Menu */
+.nav-dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 200px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    z-index: 1;
+    top: 100%;
+    left: 0;
+}
+
+.nav-dropdown:hover .dropdown-content {
+    display: block;
+    animation: fadeIn 0.3s;
+}
+
+.dropdown-content a {
+    color: #333;
+    padding: 12px 16px;
+    display: block;
+    transition: background-color 0.2s;
+}
+
+.dropdown-content a:hover {
+    background-color: #f8f9fa;
+    color: #007bff;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-top: 1px solid #ddd;
+            margin-top: 10px;
+        }
+
+        .post-actions form,
+        .post-actions button {
+            border: none;
+            background: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .post-actions form button {
+            color: #ff3b3b;
+        }
+
+        .post-actions button.toggle-comments {
+            color: #007bff;
+        }
+
+        .post-actions form button:hover,
+        .post-actions button.toggle-comments:hover {
+            opacity: 0.7;
+        }
+         /* Style for the dynamic comment textarea */
+        .comment-textarea {
+            width: 100%;
+            padding: 4px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            resize: none;
+            min-height: 40px;
+            overflow-y: hidden;
+        }
+
+        /* Style for the Post Button */
+        .post-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .post-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .post-button:active {
+            background-color: #003d7a;
+        }
+
+        /* Style for the Post Form */
+        .post-form {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+
+    
+    <nav  class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #007BFF; color: white;">
+        <!-- Left Section: Title -->
+        <div style="font-size: 18px; font-weight: bold;">
+            Agrovision
+        </div>
+        
+        <!-- Right Section: Links -->
+        <div>
+            {% if session.get('user_id') %}
+           <!---- <a href="/home" style="color: white; text-decoration: none; margin: 0 10px;">Home</a> -->
+            <a href="/weather" style="color: white; text-decoration: none; margin: 0 10px;">weather</a>
+            
+            <a href="/predict" style="color: white; text-decoration: none; margin: 0 10px;">crop recommendation</a>
+            
+         <!--    <a href="/aboutus" style="color: white; text-decoration: none; margin: 0 10px;">About Us</a>-->
+           <!--   <a href="/contactus" style="color: white; text-decoration: none; margin: 0 10px;">Contact Us</a>---->
+           
+                        <a href="/detect" style="color: white; text-decoration: none; margin: 0 10px;">detect</a>
+                        <a href="/rotation" style="color: white; text-decoration: none; margin: 0 10px;">crop rotation</a>
+                        <a href="/community" style="color: white; text-decoration: none; margin: 0 10px;">community</a>
+                <a href="/logout" style="color: white; text-decoration: none; margin: 0 10px;">Logout</a>
+            {% else %}
+                <a href="/login" style="color: white; text-decoration: none; margin: 0 10px;">Login</a>
+                <a href="/register" style="color: white; text-decoration: none; margin: 0 10px;">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Create Post Box -->
+    <div class="post-box">
+        <form method="POST" action="{{ url_for('create_post') }}" enctype="multipart/form-data">
+            <div class="post-header">
+                {% if session.get('user_id') %}
+                    <img src="{{ url_for('static', filename='uploads/' + session.get('profile_pic', 'default_profile.png')) }}" class="profile-pic">
+                {% else %}
+                    <img src="{{ url_for('static', filename='uploads/default_profile.png') }}" class="profile-pic">
+                {% endif %}
+                <textarea name="content" placeholder="Share something with the community..." required></textarea>
+            </div>
+            <input type="file" name="image" accept="image/*">
+            <button type="submit">Post</button>
+        </form>
+    </div>
+    <a href="{{ url_for('my_posts') }}" class="view-my-posts-btn">📌 View My Posts</a><br></br>
+
+    <!-- Community Posts -->
+    <div class="posts">
+        {% for post in posts %}
+        <div class="post">
+            <div class="post-header">
+                <img src="{{ url_for('static', filename='uploads/' + (post[5] or 'default_profile.png')) }}" class="profile-pic">
+                <div class="post-info">
+                    <strong>{{ post[1] }}</strong>
+                    <span>{{ post[4] }}</span>
+                </div>
+            </div>
+
+            <p class="post-content">{{ post[2] }}</p>
+            
+            {% if post[3] %}
+            <img src="{{ url_for('static', filename='uploads/' + post[3]) }}" class="post-img">
+            {% endif %}
+
+            <!-- Like and Comment Buttons -->
+            <div class="post-actions">
+                <!-- Like Button (Left) -->
+                <form method="POST" action="{{ url_for('like_post', post_id=post[0]) }}">
+                    <button type="submit">❤️ Like ({{ post[6] }})</button>
+                </form>
+
+                <!-- Comment Button (Right) -->
+                <button class="toggle-comments" onclick="toggleComments({{ post[0] }})">💬 Comment</button>
+            </div>
+            <!-- Comments Section -->
+            <div class="comments-section" id="comments-{{ post[0] }}" style="display: none;">
+                <div class="comments">
+                    {% for comment in comments[post[0]] %}
+                    <div class="comment">
+                        <img src="{{ url_for('static', filename='uploads/' + (comment[2] or 'default_profile.png')) }}" class="profile-pic">
+                        <strong>{{ comment[1] }}</strong>
+                        <p>{{ comment[0] }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                <form method="POST" action="{{ url_for('comment_post', post_id=post[0]) }}">
+                    <!-- Updated Comment Input -->
+                    <textarea name="comment" class="comment-textarea" placeholder="Write a comment..." oninput="resizeTextarea(this)" required></textarea>
+                    <button type="submit" class="post-button">Post</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+    function toggleComments(postId) {
+        var commentSection = document.getElementById("comments-" + postId);
+        if (commentSection.style.display === "none") {
+            commentSection.style.display = "block";
+        } else {
+            commentSection.style.display = "none";
+        }
+    }
+        // Function to dynamically resize the textarea based on input
+        function resizeTextarea(textarea) {
+            textarea.style.height = 'auto';  // Reset height to auto to shrink
+            textarea.style.height = (textarea.scrollHeight) + 'px';  // Set height to scrollHeight
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<h1>Login</h1>
+
+<style>
+  
+    
+    body {
+        background-image: url('/static/image.png');
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-position: center;
+        
+    }
+    
+
+    
+    
+</style>
+<form method="POST">
+    <input type="email" name="email" class="na" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button type="submit">Login</button>
+    <p>Don't have an account? <a href="/register">Register here</a></p>
+</form>
+
+{% endblock %}

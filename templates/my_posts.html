@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Posts</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='community.css') }}">
+
+</head>
+<body>
+    <style>
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-top: 1px solid #ddd;
+            margin-top: 10px;
+        }
+
+        .post-actions form,
+        .post-actions button {
+            border: none;
+            background: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .post-actions form button {
+            color: #ff3b3b;
+        }
+
+        .post-actions button.toggle-comments {
+            color: #007bff;
+        }
+
+        .post-actions form button:hover,
+        .post-actions button.toggle-comments:hover {
+            opacity: 0.7;
+        }
+
+        /* Dropdown Menu for Delete Button */
+        .post-menu {
+            position: relative;
+            display: inline-block;
+        }
+
+        .menu-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            min-width: 100px;
+        }
+
+        .menu-content form {
+            margin: 0;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .menu-content form button {
+            width: 100%;
+            background: none;
+            border: none;
+            color: red;
+            cursor: pointer;
+        }
+
+        .menu-content form button:hover {
+            background-color: #ffdddd;
+        }
+
+        .post-menu .menu-toggle {
+            cursor: pointer;
+            font-size: 20px;
+            background: none;
+            border: none;
+        }
+
+        /* Style for the dynamic comment textarea */
+        .comment-textarea {
+            width: 100%;
+            padding: 4px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            resize: none;
+            min-height: 40px;
+            overflow-y: hidden;
+        }
+
+        /* Style for the Post Button */
+        .post-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .post-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .post-button:active {
+            background-color: #003d7a;
+        }
+
+        /* Style for the Post Form */
+        .post-form {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <h2>My Posts</h2>
+        <a href="{{ url_for('community') }}" class="view-my-posts-btn">🏠 Back to Community</a>
+    </div>
+    <br></br>
+
+    <!-- User's Posts -->
+    <div class="posts">
+        {% for post in posts %}
+        <div class="post">
+            <div class="post-header">
+                <img src="{{ url_for('static', filename='uploads/' + (post[5] or 'default_profile.png')) }}" class="profile-pic">
+                <div class="post-info">
+                    <strong>{{ post[1] }}</strong>
+                    <span>{{ post[4] }}</span>
+                </div>
+
+                <!-- Three-dot Menu -->
+                <div class="post-menu">
+                    <button class="menu-toggle" onclick="toggleMenu({{ post[0] }})">⋮</button>
+                    <div class="menu-content" id="menu-{{ post[0] }}">
+                        <form method="POST" action="{{ url_for('delete_post', post_id=post[0]) }}">
+                            <button type="submit" onclick="return confirm('Are you sure you want to delete this post?')">🗑️ Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <p class="post-content">{{ post[2] }}</p>
+            
+            {% if post[3] %}
+            <img src="{{ url_for('static', filename='uploads/' + post[3]) }}" class="post-img">
+            {% endif %}
+
+            <!-- Like and Comment Buttons -->
+            <div class="post-actions">
+                <form method="POST" action="{{ url_for('like_post', post_id=post[0]) }}">
+                    <button type="submit">❤️ Like ({{ post[6] }})</button>
+                </form>
+                <button class="toggle-comments" onclick="toggleComments({{ post[0] }})">💬 Comment</button>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="comments-section" id="comments-{{ post[0] }}" style="display: none;">
+                <div class="comments">
+                    {% for comment in comments[post[0]] %}
+                    <div class="comment">
+                        <img src="{{ url_for('static', filename='uploads/' + (comment[2] or 'default_profile.png')) }}" class="profile-pic">
+                        <strong>{{ comment[1] }}</strong>
+                        <p>{{ comment[0] }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                <form method="POST" action="{{ url_for('comment_post', post_id=post[0]) }}">
+                    <!-- Updated Comment Input -->
+                    <textarea name="comment" class="comment-textarea" placeholder="Write a comment..." oninput="resizeTextarea(this)" required></textarea>
+                    <button type="submit" class="post-button">Post</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+    function toggleComments(postId) {
+        var commentSection = document.getElementById("comments-" + postId);
+        commentSection.style.display = (commentSection.style.display === "none") ? "block" : "none";
+    }
+
+    function toggleMenu(postId) {
+        var menu = document.getElementById("menu-" + postId);
+        menu.style.display = (menu.style.display === "block") ? "none" : "block";
+
+        // Close other menus
+        document.querySelectorAll('.menu-content').forEach((el) => {
+            if (el.id !== "menu-" + postId) {
+                el.style.display = "none";
+            }
+        });
+    }
+
+    // Close menu if clicked outside
+    document.addEventListener("click", function(event) {
+        if (!event.target.matches(".menu-toggle")) {
+            document.querySelectorAll(".menu-content").forEach((menu) => {
+                menu.style.display = "none";
+            });
+        }
+    });
+
+    // Function to dynamically resize the textarea based on input
+    function resizeTextarea(textarea) {
+        textarea.style.height = 'auto';  // Reset height to auto to shrink
+        textarea.style.height = (textarea.scrollHeight) + 'px';  // Set height to scrollHeight
+    }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f8d7da;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        .error-message {
+            color: #721c24;
+            font-size: 18px;
+        }
+        .recovery-tip {
+            margin-top: 10px;
+            color: #856404;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Oops! Something went wrong. check your internet connection</h2>
+        <p class="error-message">{{ error_message }}</p>
+        <p class="recovery-tip">{{ recovery_tip }}</p>
+        <a href="/detect" style="display: inline-block; margin-top: 15px; padding: 10px 20px; background-color:rgba(202, 8, 24, 0.86); color: white; text-decoration: none; border-radius: 5px;">Go Back</a>
+    </div>
+</body>
+</html>

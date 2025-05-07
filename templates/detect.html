@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Crop Detection{% endblock %}
+
+{% block content %}
+
+<div class="upload-container">
+    <h2>Upload Crop Image</h2>
+    <form id="uploadForm" method="POST" enctype="multipart/form-data">
+        <div class="file-input">
+            <input type="file" name="file" id="fileInput" accept="image/*" required>
+            <label for="fileInput">Choose Image</label>
+        </div>
+        <button type="submit">Analyze Crop</button>
+    </form>
+</div>
+
+<script>
+document.getElementById('fileInput').addEventListener('change', function(e) {
+    const fileName = e.target.files[0].name;
+    document.querySelector('label[for="fileInput"]').textContent = fileName;
+});
+</script>
+{% endblock %}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Crop Prediction{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #007BFF; color: white;">
+        <!-- Left Section: Title -->
+        <div style="font-size: 18px; font-weight: bold;">
+            Agrovision
+        </div>
+        
+        <!-- Right Section: Links -->
+        <div>
+    
+            {% if session.get('user_id') %}
+           <!-- <a href="/home" style="color: white; text-decoration: none; margin: 0 10px;">Home</a>-->
+            <a href="/weather" style="color: white; text-decoration: none; margin: 0 10px;">weather</a>
+            <a href="/predict" style="color: white; text-decoration: none; margin: 0 10px;">crop recommendation</a>
+                        <a href="/detect" style="color: white; text-decoration: none; margin: 0 10px;">detect</a>
+                        <a href="/rotation" style="color: white; text-decoration: none; margin: 0 10px;">crop rotation</a>
+                        <a href="/community" style="color: white; text-decoration: none; margin: 0 10px;">community</a>
+                <a href="/logout" style="color: white; text-decoration: none; margin: 0 10px;">Logout</a>
+            {% else %}
+                <a href="/login" style="color: white; text-decoration: none; margin: 0 10px;">Login</a>
+                <a href="/register" style="color: white; text-decoration: none; margin: 0 10px;">Register</a>
+                <a href="/aboutus" style="color: white; text-decoration: none; margin: 0 10px;">About Us</a>
+            <a href="/contactus" style="color: white; text-decoration: none; margin: 0 10px;">Contact Us</a>
+            {% endif %}
+        </div>
+    </nav>
+    
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

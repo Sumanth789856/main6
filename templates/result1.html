@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Prediction Result{% endblock %}
+{% block content %}
+
+<body>
+    <h1>Predicted Crop: {{ crop }}</h1>
+
+    <!-- Display the crop image -->
+    <img src="{{ url_for('static', filename=crop_image) }}" alt="{{ crop }}" style="max-width: 500%; height: auto;">
+
+    <br>
+    <br>
+    <!-- Predict Again Button -->
+    <a href="{{ url_for('predict') }}" style="text-decoration: none; padding: 10px 20px; background-color: #4CAF50; color: white; border-radius: 5px; display: inline-block; cursor: pointer;">
+        Predict Again
+    </a>
+</body>
+
+{% endblock %}
