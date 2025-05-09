@@ -4,76 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Crop Prediction{% endblock %}</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+
 <div class="landing-container">
     <h1>Welcome to AgroVision</h1>
     <p>Leading the way in sustainable agriculture and innovative farming solutions.</p>
     <button onclick="window.location.href='{{ url_for('login') }}'">Learn More</button>
-    
 
     <div class="services">
         <h2>Our Services</h2>
         <div class="service-cards">
             <div class="card">
-                <img src="/static/recommend.jpeg">
+                <img src="{{ url_for('static', filename='recommend.jpeg') }}" alt="Crop Recommendation">
                 <h3>Crop Recommendation</h3>
                 <p>Based on the nutrients of the land to predict the best crop.</p>
             </div>
-            
-            <div class="card">
-                <img src="/static/Disease detection.jpg" alt="Innovative Technology Icon">
-                <h3>Disease Detection</h3>
-                <p>To detect the diseases .</p>
-            </div>
-            <div class="card">
-                <img src="/static/Crop-Rotaion.webp" alt="Expert Consultation Icon">
 
-                <h3>Crop Rotation<h3>
+            <div class="card">
+                <img src="{{ url_for('static', filename='Disease detection.jpg') }}" alt="Disease Detection">
+                <h3>Disease Detection</h3>
+                <p>To detect the diseases.</p>
+            </div>
+
+            <div class="card">
+                <img src="{{ url_for('static', filename='Crop-Rotaion.webp') }}" alt="Crop Rotation">
+                <h3>Crop Rotation</h3>
                 <p>Providing expert advice and consultation to help you achieve your farming goals.</p>
             </div>
+
             <div class="card">
-                <img src="/static/weather.png" alt="Weather Forecast Icon" class="card-img">
+                <img src="{{ url_for('static', filename='weather.png') }}" alt="Weather Forecast">
                 <h3>Weather Forecast</h3>
-                <p>Stay updated with real-time weather forecasts to make better agricultural decisions. Plan your farming activities with precise temperature, rainfall, and humidity predictions!</p>
+                <p>Stay updated with real-time weather forecasts to make better agricultural decisions.</p>
             </div>
-            
+
             <div class="card">
-                <img src="/static/community.png" alt="Innovative Technology Icon" class="card-img">
-                <h3>Community support</h3>
-                <p>Connect with fellow farmers, share experiences, get solutions to crop issues, and support each other through discussions and advice.</p>
+                <img src="{{ url_for('static', filename='community.png') }}" alt="Community Support">
+                <h3>Community Support</h3>
+                <p>Connect with fellow farmers, share experiences, and get crop issue solutions.</p>
             </div>
         </div>
     </div>
+</div>
 
-      
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Footer</title>
-        <style>
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-            }
-            .footer {
-                background: #2c3e50;
-                color: white;
-                text-align: center;
-                padding: 20px;
-            }
-        </style>
-    </head>
- 
-        
-       
-        
-  
-    </html>
-    
+<div class="footer">
+    <p>&copy; 2025 AgroVision. All rights reserved.</p>
 </div>
 
 </body>
