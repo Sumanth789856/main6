@@ -3,270 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crop Prediction - AgroVision</title>
+    <title>{% block title %}Crop Prediction{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
     <style>
-        /* Base Styles */
-        :root {
-            --primary-color: #2c7d3f;
-            --secondary-color: #4CAF50;
-            --text-color: #333;
-            --light-bg: #f9f9f9;
-            --white: #ffffff;
-            --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        * {
+        /* Basic Mobile Responsive Fixes */
+        body {
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--light-bg);
+            width: 100%;
             overflow-x: hidden;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            background-color: #f5f9f5; /* Light green background */
         }
-
-        /* Layout */
-        .landing-container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1.5rem;
-            flex: 1;
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            padding: 2rem 0;
-        }
-
-        .header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 1rem;
-            color: var(--primary-color);
-        }
-
-        .tagline {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Button */
-        .cta-button {
-            background-color: var(--secondary-color);
-            color: var(--white);
-            border: none;
-            padding: 0.8rem 1.8rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
-        }
-
-        .cta-button:hover {
-            background-color: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Services Section */
-        .services {
-            margin: 2rem 0 3rem;
-        }
-
-        .services h2 {
-            font-size: 1.8rem;
-            margin-bottom: 2rem;
-            color: var(--primary-color);
-            text-align: center;
-        }
-
-        .service-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            justify-content: center;
-        }
-
-        /* Cards */
-        .card {
-            background: var(--white);
-            border-radius: 10px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-        }
-
-        .card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
-
-        .card-content {
-            padding: 1.2rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.8rem;
-            color: var(--primary-color);
-        }
-
-        .card p {
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Footer */
-        .footer {
-            background-color: var(--primary-color);
-            color: var(--white);
-            text-align: center;
-            padding: 1.5rem;
-            width: 100%;
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .tagline {
-                font-size: 1rem;
-            }
-            
-            .services h2 {
-                font-size: 1.6rem;
-            }
-            
-            .service-cards {
-                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-                gap: 1.2rem;
-            }
-            
-            .card img {
-                height: 160px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .landing-container {
-                padding: 1rem;
-            }
-            
-            .header {
-                padding: 1.5rem 0;
-            }
-            
-            .header h1 {
-                font-size: 1.6rem;
-            }
-            
-            .services h2 {
-                font-size: 1.4rem;
-                margin-bottom: 1.5rem;
-            }
-            
-            .service-cards {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            
-            .card-content {
-                padding: 1rem;
-            }
-            
-            .card h3 {
-                font-size: 1.2rem;
-            }
-            
-            .footer {
-                padding: 1rem;
-            }
-        }
-    </style>
-</head>
+        </style>
 <body>
-    <div class="landing-container">
-        <header class="header">
-            <h1>Welcome to AgroVision</h1>
-            <p class="tagline">Leading the way in sustainable agriculture and innovative farming solutions.</p>
-            <button class="cta-button" onclick="window.location.href='{{ url_for('login') }}'">Learn More</button>
-        </header>
+<div class="landing-container">
+    <h1>Welcome to AgroVision</h1>
+    <p>Leading the way in sustainable agriculture and innovative farming solutions.</p>
+    <button onclick="window.location.href='{{ url_for('login') }}'">Learn More</button>
+    
 
-        <section class="services">
-            <h2>Our Services</h2>
-            <div class="service-cards">
-                <div class="card">
-                    <img src="{{ url_for('static', filename='recommend.jpeg') }}" alt="Crop Recommendation">
-                    <div class="card-content">
-                        <h3>Crop Recommendation</h3>
-                        <p>Based on the nutrients of the land to predict the best crop.</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <img src="{{ url_for('static', filename='Disease detection.jpg') }}" alt="Disease Detection">
-                    <div class="card-content">
-                        <h3>Disease Detection</h3>
-                        <p>To detect the diseases.</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <img src="{{ url_for('static', filename='Crop-Rotaion.webp') }}" alt="Crop Rotation">
-                    <div class="card-content">
-                        <h3>Crop Rotation</h3>
-                        <p>Providing expert advice and consultation to help you achieve your farming goals.</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <img src="{{ url_for('static', filename='weather.png') }}" alt="Weather Forecast">
-                    <div class="card-content">
-                        <h3>Weather Forecast</h3>
-                        <p>Stay updated with real-time weather forecasts to make better agricultural decisions.</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <img src="{{ url_for('static', filename='community.png') }}" alt="Community Support">
-                    <div class="card-content">
-                        <h3>Community Support</h3>
-                        <p>Connect with fellow farmers, share experiences, and get crop issue solutions.</p>
-                    </div>
-                </div>
+    <div class="services">
+        <h2>Our Services</h2>
+        <div class="service-cards">
+            <div class="card">
+                <img src="/static/recommend.jpeg">
+                <h3>Crop Recommendation</h3>
+                <p>Based on the nutrients of the land to predict the best crop.</p>
             </div>
-        </section>
+            
+            <div class="card">
+                <img src="/static/Disease detection.jpg" alt="Innovative Technology Icon">
+                <h3>Disease Detection</h3>
+                <p>To detect the diseases .</p>
+            </div>
+            <div class="card">
+                <img src="/static/Crop-Rotaion.webp" alt="Expert Consultation Icon">
+
+                <h3>Crop Rotation<h3>
+                <p>Providing expert advice and consultation to help you achieve your farming goals.</p>
+            </div>
+            <div class="card">
+                <img src="/static/weather.png" alt="Weather Forecast Icon" class="card-img">
+                <h3>Weather Forecast</h3>
+                <p>Stay updated with real-time weather forecasts to make better agricultural decisions. Plan your farming activities with precise temperature, rainfall, and humidity predictions!</p>
+            </div>
+            
+            <div class="card">
+                <img src="/static/community.png" alt="Innovative Technology Icon" class="card-img">
+                <h3>Community support</h3>
+                <p>Connect with fellow farmers, share experiences, get solutions to crop issues, and support each other through discussions and advice.</p>
+            </div>
+        </div>
     </div>
 
-    <footer class="footer">
-        <p>&copy; 2025 AgroVision. All rights reserved.</p>
-    </footer>
+      
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Footer</title>
+        <style>
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }
+            .footer {
+                background: #2c3e50;
+                color: white;
+                text-align: center;
+                padding: 20px;
+            }
+        </style>
+    </head>
+ 
+        
+       
+        
+  
+    </html>
+    
+</div>
+
 </body>
-</html>
+                </html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Crop Prediction{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+    <style>
+        /* Basic Mobile Responsive Fixes */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+            background-color: #f5f9f5; /* Light green background */
+        }
+        </style>
+<body>
+<div class="landing-container">
+    <h1>Welcome to AgroVision</h1>
+    <p>Leading the way in sustainable agriculture and innovative farming solutions.</p>
+    <button onclick="window.location.href='{{ url_for('login') }}'">Learn More</button>
+    
+
+    <div class="services">
+        <h2>Our Services</h2>
+        <div class="service-cards">
+            <div class="card">
+                <img src="/static/recommend.jpeg">
+                <h3>Crop Recommendation</h3>
+                <p>Based on the nutrients of the land to predict the best crop.</p>
+            </div>
+            
+            <div class="card">
+                <img src="/static/Disease detection.jpg" alt="Innovative Technology Icon">
+                <h3>Disease Detection</h3>
+                <p>To detect the diseases .</p>
+            </div>
+            <div class="card">
+                <img src="/static/Crop-Rotaion.webp" alt="Expert Consultation Icon">
+
+                <h3>Crop Rotation<h3>
+                <p>Providing expert advice and consultation to help you achieve your farming goals.</p>
+            </div>
+            <div class="card">
+                <img src="/static/weather.png" alt="Weather Forecast Icon" class="card-img">
+                <h3>Weather Forecast</h3>
+                <p>Stay updated with real-time weather forecasts to make better agricultural decisions. Plan your farming activities with precise temperature, rainfall, and humidity predictions!</p>
+            </div>
+            
+            <div class="card">
+                <img src="/static/community.png" alt="Innovative Technology Icon" class="card-img">
+                <h3>Community support</h3>
+                <p>Connect with fellow farmers, share experiences, get solutions to crop issues, and support each other through discussions and advice.</p>
+            </div>
+        </div>
+    </div>
+
+      
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Footer</title>
+        <style>
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }
+            .footer {
+                background: #2c3e50;
+                color: white;
+                text-align: center;
+                padding: 20px;
+            }
+        </style>
+    </head>
+ 
+        
+       
+        
+  
+    </html>
+    
+</div>
+
+</body>
+                </html>
