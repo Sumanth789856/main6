@@ -475,4 +475,22 @@ width: 100px;
 height: 100px;
 margin-bottom: 10px;
 }
+/* Mobile styles (default) */
+.service-item {
+  width: 100%;
+}
+
+/* Tablet styles */
+@media (min-width: 481px) {
+  .service-item {
+    width: calc(50% - 20px);
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 1025px) {
+  .service-item {
+    width: calc(33.33% - 20px);
+  }
+}
 
