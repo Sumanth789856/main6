@@ -24,10 +24,10 @@ app.secret_key = os.getenv('SECRET_KEY', 'your_secret_key')
 db_pool = pool.SimpleConnectionPool(
     minconn=1,
     maxconn=10,
-    host=os.getenv('DB_HOST', 'ep-polished-river-a42avned-pooler.us-east-1.aws.neon.tech'),
+    host=os.getenv('DB_HOST', 'eep-orange-flower-a85zc9oh-pooler.eastus2.azure.neon.tech'),
     database=os.getenv('DB_NAME', 'neondb'),
     user=os.getenv('DB_USER', 'neondb_owner'),
-    password=os.getenv('DB_PASSWORD', 'npg_LJBt8U6vidgH')
+    password=os.getenv('DB_PASSWORD', 'npg_wrUq0Q3jLEZk')
 )
 
 @contextmanager
