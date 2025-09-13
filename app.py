@@ -347,7 +347,7 @@ def contactus():
 
 # Configure Gemini AI (should be at module level, not in route)
 try:
-    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyD0GWPhKt5sQk957ASwiNYz3BP-a4gLsXU').strip()
+    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyDVYTCIsWcTru20v91dv9jxA6d-wr0lXbY').strip()
     genai.configure(api_key=GEMINI_API_KEY)
     gemini_model = genai.GenerativeModel('gemini-1.5-flash')
 except Exception as e:
