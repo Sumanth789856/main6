@@ -354,129 +354,130 @@ except Exception as e:
     print(f"Failed to initialize Gemini: {e}")
     gemini_model = None
 
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "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")
+MODEL_NAME = "google/gemini-2.5-flash-image"
+
 @app.route('/detect', methods=['GET', 'POST'])
 def detect():
     if request.method == 'POST':
-        # Validate file upload
         if 'file' not in request.files:
             flash('No file uploaded')
             return redirect(request.url)
         
         file = request.files['file']
         if file.filename == '':
-            flash('No selected file')
+            flash('No file selected')
             return redirect(request.url)
         
-        if not file.content_type.startswith('image/'):
-            flash('Please upload an image file')
-            return redirect(request.url)
+        if file:
+            # Save uploaded image
+            filename = secure_filename(file.filename)
+            upload_dir = os.path.join('static', 'uploads')
+            os.makedirs(upload_dir, exist_ok=True)
+            img_path = os.path.join(upload_dir, filename)
+            file.save(img_path)
 
-        if file and gemini_model:
             try:
-                # Secure file handling
-                filename = secure_filename(file.filename)
-                upload_dir = os.path.join('static', 'uploads')
-                os.makedirs(upload_dir, exist_ok=True)
-                img_path = os.path.join(upload_dir, filename)
-                file.save(img_path)
+                # Convert image to Base64 for OpenRouter
+                with open(img_path, "rb") as image_file:
+                    encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
 
-                # Process image for Gemini
-                img = Image.open(img_path)
-                img_byte_arr = io.BytesIO()
-                img.save(img_byte_arr, format='JPEG')
-                img_bytes = img_byte_arr.getvalue()
-
-                # Generate analysis with improved prompt
-                prompt = """Analyze this crop image and provide detailed information in MARKDOWN format:
+                # --- Prompt for AI ---
+                prompt = """Analyze this crop image and provide the following in MARKDOWN format:
 
 **Crop Name:** [Identify the crop species]
-**Health Status:** [Healthy/Diseased/Stressed]
-**Disease/Issue:** [Specific disease or problem if any]
-**Confidence Level:** [High/Medium/Low]
-
+**Disease:** [Name of the disease or 'No Disease Detected']
 **Recommendations:**
-- [Treatment options]
-- [Prevention methods]
-- [Care instructions]
+- [List of pesticides or fungicides]
+- [Preventive measures]
 
-**Additional Notes:**
-[Any other relevant observations]
+Include appropriate emojis 🌱🌾."""
 
-Include appropriate emojis for better readability."""
+                # --- Call OpenRouter API ---
+                response = requests.post(
+                    url="https://openrouter.ai/api/v1/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": "http://localhost:5000",
+                        "X-Title": "Crop Disease Detector"
+                    },
+                    data=json.dumps({
+                        "model": MODEL_NAME,
+                        "messages": [
+                            {
+                                "role": "user",
+                                "content": [
+                                    {"type": "text", "text": prompt},
+                                    {
+                                        "type": "image_url",
+                                        "image_url": {
+                                            "url": f"data:image/jpeg;base64,{encoded_image}"
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                )
 
-                response = gemini_model.generate_content([
-                    prompt,
-                    {"mime_type": "image/jpeg", "data": img_bytes}
-                ])
+                response_json = response.json()
 
-                # Parse response with improved logic
+                # --- Handle API errors ---
+                if "error" in response_json:
+                    error_msg = response_json["error"].get("message", "Unknown API error")
+                    return render_template(
+                        'error.html',
+                        error_message=f"AI Error: {error_msg}",
+                        recovery_tip="Try uploading a clearer crop image."
+                    )
+
+                # --- Extract AI analysis safely ---
+                message_content = response_json['choices'][0]['message'].get('content', '')
+                if isinstance(message_content, list):
+                    content = ''.join([item.get('text', '') for item in message_content if isinstance(item, dict)])
+                else:
+                    content = message_content
+
+                # --- Parse AI Response ---
                 result_data = {
-                    'crop': 'Unknown',
-                    'status': 'Unknown',
-                    'disease': 'None detected',
-                    'confidence': 'N/A',
+                    'crop': 'Unknown Crop',
+                    'disease': 'No Disease Detected',
                     'recommendations': [],
-                    'notes': '',
                     'image': img_path,
-                    'status_icon': '❓'
+                    'status_icon': '⚠️'
                 }
 
-                if response.text:
-                    analysis = response.text
-                    result_data['raw_analysis'] = analysis  # For debugging
+                lines = content.split('\n')
+                for line in lines:
+                    if '**Crop Name:**' in line:
+                        result_data['crop'] = line.split('**Crop Name:**')[-1].strip()
+                    elif '**Disease:**' in line:
+                        result_data['disease'] = line.split('**Disease:**')[-1].strip()
+                        result_data['status_icon'] = '✅' if 'No Disease' in result_data['disease'] else '⚠️'
+                    elif '**Recommendations:**' in line:
+                        recs = []
+                        for item in lines[lines.index(line)+1:]:
+                            if item.strip().startswith('-'):
+                                recs.append(item.strip()[1:].strip())
+                        result_data['recommendations'] = recs
+                        break
 
-                    # Extract information using more robust parsing
-                    sections = {
-                        'crop': extract_markdown_section(analysis, 'Crop Name'),
-                        'status': extract_markdown_section(analysis, 'Health Status'),
-                        'disease': extract_markdown_section(analysis, 'Disease/Issue'),
-                        'confidence': extract_markdown_section(analysis, 'Confidence Level'),
-                        'recommendations': extract_list_items(analysis, 'Recommendations'),
-                        'notes': extract_markdown_section(analysis, 'Additional Notes')
-                    }
-
-                    # Update result data
-                    result_data.update(sections)
-                    
-                    # Set appropriate status icon
-                    if 'healthy' in result_data['status'].lower():
-                        result_data['status_icon'] = '✅'
-                    elif 'diseased' in result_data['status'].lower():
-                        result_data['status_icon'] = '⚠️'
-                    elif 'stressed' in result_data['status'].lower():
-                        result_data['status_icon'] = '🌡️'
-
-                return render_template('interactive_result.html', **result_data)
+                return render_template(
+                    'interactive_result.html',
+                    **result_data,
+                    original_filename=filename
+                )
 
             except Exception as e:
-                # Clean up file if error occurs
-                if os.path.exists(img_path):
-                    os.remove(img_path)
-                    
                 return render_template(
                     'error.html',
-                    error_message="Analysis failed. Please try again.",
-                    recovery_tip="Try uploading a clearer image of the crop leaves"
+                    error_message=f"Analysis failed: {str(e)}",
+                    recovery_tip="Try uploading a clearer image of the crop leaves."
                 )
-        else:
-            flash('AI service is currently unavailable')
-            return redirect(request.url)
 
     return render_template('detect.html')
 
-# Helper functions for parsing markdown
-def extract_markdown_section(text, header):
-    """Extract content after a markdown header"""
-    if f'**{header}:**' in text:
-        return text.split(f'**{header}:**')[1].split('\n')[0].strip()
-    return ''
-
-def extract_list_items(text, header):
-    """Extract markdown list items after a header"""
-    if f'**{header}:**' in text:
-        section = text.split(f'**{header}:**')[1].split('\n\n')[0]
-        return [line[2:].strip() for line in section.split('\n') if line.startswith('- ')]
-    return []
 
 @app.route('/logout')
 def logout():
