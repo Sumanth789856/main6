@@ -7,6 +7,8 @@ from sklearn.ensemble import RandomForestClassifier
 import joblib
 from werkzeug.utils import secure_filename 
 import os
+import base64
+import json
 import requests
 from datetime import datetime
 import google.generativeai as genai
@@ -342,19 +344,8 @@ def contactus():
         flash('Thank you for reaching out! We will get back to you soon.')
         return redirect(url_for('contactus'))
     return render_template('contactus.html')
-# Configure Gemini
-
-
-# Configure Gemini AI (should be at module level, not in route)
-try:
-    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyA2_004JTW_-nT6I3WYwurjzBqjTLOpFSc').strip()
-    genai.configure(api_key=GEMINI_API_KEY)
-    gemini_model = genai.GenerativeModel('gemini-1.5-flash')
-except Exception as e:
-    print(f"Failed to initialize Gemini: {e}")
-    gemini_model = None
-
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "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")
+    
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "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")
 MODEL_NAME = "google/gemini-2.5-flash-image"
 
 @app.route('/detect', methods=['GET', 'POST'])
@@ -477,6 +468,150 @@ Include appropriate emojis 🌱🌾."""
                 )
 
     return render_template('detect.html')
+
+
+'''
+# Configure Gemini AI (should be at module level, not in route)
+gemini_model = None
+try:
+    GEMINI_API_KEY = os.getenv('AIzaSyDiR28L-K2bRCHhZK4gye6MbHpeXZ62cpU', '').strip()
+    if not GEMINI_API_KEY:
+        # fallback if you want a default key (not recommended for production!)
+        GEMINI_API_KEY = "AIzaSyDiR28L-K2bRCHhZK4gye6MbHpeXZ62cpU"
+
+    genai.configure(api_key=GEMINI_API_KEY)
+    gemini_model = genai.GenerativeModel('gemini-2.0-flash')
+except Exception as e:
+    print(f"Failed to initialize Gemini: {e}")
+    gemini_model = None
+
+
+@app.route('/detect', methods=['GET', 'POST'])
+def detect():
+    if request.method == 'POST':
+        # Validate file upload
+        if 'file' not in request.files:
+            flash('No file uploaded')
+            return redirect(request.url)
+        
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        
+        if not file.content_type.startswith('image/'):
+            flash('Please upload an image file')
+            return redirect(request.url)
+
+        if file and gemini_model:
+            try:
+                # Secure file handling
+                filename = secure_filename(file.filename)
+                upload_dir = os.path.join('static', 'uploads')
+                os.makedirs(upload_dir, exist_ok=True)
+                img_path = os.path.join(upload_dir, filename)
+                file.save(img_path)
+
+                # Convert image to bytes for Gemini
+                img = Image.open(img_path)
+                img_byte_arr = io.BytesIO()
+                img.save(img_byte_arr, format='JPEG')
+                img_bytes = img_byte_arr.getvalue()
+
+                # Prompt
+                prompt = """Analyze this crop image and provide detailed information in MARKDOWN format:
+
+**Crop Name:** [Identify the crop species]
+**Health Status:** [Healthy/Diseased/Stressed]
+**Disease/Issue:** [Specific disease or problem if any]
+**Confidence Level:** [High/Medium/Low]
+
+**Recommendations:**
+- [Treatment options]
+- [Prevention methods]
+- [Care instructions]
+
+**Additional Notes:**
+[Any other relevant observations]
+
+Include appropriate emojis for better readability."""
+
+                # Call Gemini
+                response = gemini_model.generate_content([
+                    {"role": "user", "parts": [
+                        {"text": prompt},
+                        {"inline_data": {"mime_type": "image/jpeg", "data": img_bytes}}
+                    ]}
+                ])
+
+                # Default result
+                result_data = {
+                    'crop': 'Unknown',
+                    'status': 'Unknown',
+                    'disease': 'None detected',
+                    'confidence': 'N/A',
+                    'recommendations': [],
+                    'notes': '',
+                    'image': img_path,
+                    'status_icon': '❓'
+                }
+
+                if response.text:
+                    analysis = response.text
+                    result_data['raw_analysis'] = analysis  # keep raw output for debugging
+
+                    # Extract info from Markdown
+                    result_data['crop'] = extract_markdown_section(analysis, 'Crop Name')
+                    result_data['status'] = extract_markdown_section(analysis, 'Health Status')
+                    result_data['disease'] = extract_markdown_section(analysis, 'Disease/Issue')
+                    result_data['confidence'] = extract_markdown_section(analysis, 'Confidence Level')
+                    result_data['recommendations'] = extract_list_items(analysis, 'Recommendations')
+                    result_data['notes'] = extract_markdown_section(analysis, 'Additional Notes')
+
+                    # Set emoji
+                    status_lower = result_data['status'].lower()
+                    if 'healthy' in status_lower:
+                        result_data['status_icon'] = '✅'
+                    elif 'diseased' in status_lower:
+                        result_data['status_icon'] = '⚠️'
+                    elif 'stressed' in status_lower:
+                        result_data['status_icon'] = '🌡️'
+
+                return render_template('interactive_result.html', **result_data)
+
+            except Exception as e:
+                # Clean up file if error occurs
+                if os.path.exists(img_path):
+                    os.remove(img_path)
+                return render_template(
+                    'error.html',
+                    error_message="Analysis failed. Please try again.",
+                    recovery_tip="Try uploading a clearer image of the crop leaves"
+                )
+        else:
+            flash('AI service is currently unavailable')
+            return redirect(request.url)
+
+    return render_template('detect.html')
+
+
+# --- Helper functions ---
+
+def extract_markdown_section(text, header):
+    """Extract content after a markdown header like **Header:**"""
+    marker = f'**{header}:**'
+    if marker in text:
+        return text.split(marker, 1)[1].split('\n')[0].strip()
+    return ''
+
+
+def extract_list_items(text, header):
+    """Extract markdown list items after a header"""
+    marker = f'**{header}:**'
+    if marker in text:
+        section = text.split(marker, 1)[1].split('\n\n')[0]
+        return [line[2:].strip() for line in section.split('\n') if line.startswith('- ')]
+    return [] '''
 
 
 @app.route('/logout')
