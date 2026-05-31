@@ -9,26 +9,8 @@
         <p class="file-info">Uploaded: {{ original_filename }}</p>
     </div>
 
-    <div class="analysis-card crop-card">
-        <div class="card-icon">🌱</div>
-        <h3>Identified Crop</h3>
-        <p class="crop-name">{{ crop }}</p>
-    </div>
-
-    <div class="analysis-card disease-card {{ 'warning' if 'No Disease' not in disease }}">
-        <div class="card-icon">{{ status_icon }}</div>
-        <h3>Disease Detection</h3>
-        <p class="disease-name">{{ disease }}</p>
-    </div>
-
-    <div class="analysis-card recommendation-card">
-        <div class="card-icon">💡</div>
-        <h3>Recommended Actions</h3>
-        <ul class="recommendation-list">
-            {% for item in recommendations %}
-            <li>{{ item }}</li>
-            {% endfor %}
-        </ul>
+    <div class="analysis-output markdown-body">
+        {{ html_output | safe }}
     </div>
 
     <div class="action-buttons">

@@ -2,20 +2,27 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import pandas as pd
 import numpy as np
 import pickle
+import markdown
+from google.genai.types import Part
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 import joblib
 from werkzeug.utils import secure_filename 
 import os
+<<<<<<< HEAD
+#import google.generativeai as genai
+=======
+>>>>>>> a7848b0224c3bdf3e698f5c7ad93dae89bc58794
 import base64
 import json
 import requests
 from datetime import datetime
-import google.generativeai as genai
+from google import genai
 from dotenv import load_dotenv
 from psycopg2 import pool
 from contextlib import contextmanager
 import io
+
 from PIL import Image
 load_dotenv()  # Load environment variables
 
@@ -345,7 +352,11 @@ def contactus():
         return redirect(url_for('contactus'))
     return render_template('contactus.html')
     
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "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")
+<<<<<<< HEAD
+
+
+=======
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "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")
 MODEL_NAME = "google/gemini-2.5-flash-image"
 
 @app.route('/detect', methods=['GET', 'POST'])
@@ -484,34 +495,50 @@ try:
 except Exception as e:
     print(f"Failed to initialize Gemini: {e}")
     gemini_model = None
+>>>>>>> a7848b0224c3bdf3e698f5c7ad93dae89bc58794
 
 
 @app.route('/detect', methods=['GET', 'POST'])
 def detect():
     if request.method == 'POST':
-        # Validate file upload
         if 'file' not in request.files:
-            flash('No file uploaded')
             return redirect(request.url)
-        
+
         file = request.files['file']
         if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        
-        if not file.content_type.startswith('image/'):
-            flash('Please upload an image file')
             return redirect(request.url)
 
-        if file and gemini_model:
+        if file:
+            filename = secure_filename(file.filename)
+            upload_dir = os.path.join('static', 'uploads')
+            os.makedirs(upload_dir, exist_ok=True)
+            img_path = os.path.join(upload_dir, filename)
+            file.save(img_path)
+
             try:
-                # Secure file handling
-                filename = secure_filename(file.filename)
-                upload_dir = os.path.join('static', 'uploads')
-                os.makedirs(upload_dir, exist_ok=True)
-                img_path = os.path.join(upload_dir, filename)
-                file.save(img_path)
+                # --- START OF IMPROVED PROMPT ---
+                # The prompt is crucial for the quality of the AI's output.
+                # Here, we make it more specific and guide the model better.
+                client = genai.Client()
+                uploaded_file = client.files.upload(file=img_path)
+                response = client.models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=[
+                    """You are a highly experienced agricultural expert and plant pathologist.
+                    Your primary goal is to provide precise diagnoses and actionable, practical recommendations
+                    for crop health based on the provided image.
+                    Think step-by-step to analyze the visual cues.
 
+<<<<<<< HEAD
+                    **Output should be in MARKDOWN format with the following clear sections:**
+
+                    ## 🌱 Crop Information
+                    - **Crop Name:** <name_of_crop_if_identifiable/Uncertain>
+                    - **Disease/Issue:** <specific_disease_name_if_diagnosed/Nutrient_Deficiency/Pest_Infestation/Environmental_Stress/Healthy>
+                    - **Health Status:** <Healthy/Diseased/Stressed/Early_Stage_Disease/Advanced_Disease>
+                    - **Severity:** <Low/Medium/High/N/A>
+                    - **Confidence in Diagnosis:** <Low/Medium/High> (Self-assessment of confidence)
+=======
                 # Convert image to bytes for Gemini
                 img = Image.open(img_path)
                 img_byte_arr = io.BytesIO()
@@ -520,22 +547,67 @@ def detect():
 
                 # Prompt
                 prompt = """Analyze this crop image and provide detailed information in MARKDOWN format:
+>>>>>>> a7848b0224c3bdf3e698f5c7ad93dae89bc58794
 
-**Crop Name:** [Identify the crop species]
-**Health Status:** [Healthy/Diseased/Stressed]
-**Disease/Issue:** [Specific disease or problem if any]
-**Confidence Level:** [High/Medium/Low]
+                    ## 💡 Recommended Actions
+                    Provide clear, concise, and practical steps a farmer can take. If no disease is detected,
+                    provide general good practices.
 
-**Recommendations:**
-- [Treatment options]
-- [Prevention methods]
-- [Care instructions]
+                    ### 🧪 Pesticides
+                    - <List specific, common, and effective pesticides for the diagnosed issue. Include application guidance if possible.>
+                    - <If no disease requires pesticide, state "Not recommended for this issue." or "N/A">
 
-**Additional Notes:**
-[Any other relevant observations]
+                    ### 🌾 Fertilizers
+                    - <List specific fertilizer types or nutrient supplements if a deficiency is suspected. Include suggested application methods/rates.>
+                    - <If not applicable, state "Not required for this issue." or "N/A">
 
-Include appropriate emojis for better readability."""
+                    ### 🌍 Natural Remedies / Organic Solutions
+                    - <List organic or natural methods to manage the problem or improve plant health.>
+                    - <If not applicable, state "No specific natural remedies apply." or "N/A">
 
+<<<<<<< HEAD
+                    ### 🛡️ Prevention Methods
+                    - <List proactive measures to prevent recurrence, spread, or to maintain overall crop health.>
+
+                    ### ⚠️ Important Considerations
+                    - <Any critical warnings, e.g., "Isolate affected plants," "Consult local agricultural extension," "Monitor closely.">
+                    - <Any additional advice like irrigation, pruning, or soil management.>
+
+                    **Example of a response for a healthy plant:**
+                    ## 🌱 Crop Information
+                    - **Crop Name:** Tomato
+                    - **Disease/Issue:** None
+                    - **Health Status:** Healthy
+                    - **Severity:** N/A
+                    - **Confidence in Diagnosis:** High
+
+                    ## 💡 Recommended Actions
+                    ### 🧪 Pesticides
+                    - Not recommended for this healthy plant.
+
+                    ### 🌾 Fertilizers
+                    - Continue with a balanced NPK fertilizer according to growth stage.
+
+                    ### 🌍 Natural Remedies / Organic Solutions
+                    - Ensure good air circulation. Consider companion planting for pest deterrence.
+
+                    ### 🛡️ Prevention Methods
+                    - Regular scouting for early signs of pests/diseases. Maintain consistent watering.
+                    - Rotate crops annually.
+
+                    ### ⚠️ Important Considerations
+                    - Monitor for nutrient deficiencies as the plant grows.
+                    """,
+                    uploaded_file
+                ]
+                )
+                # --- END OF IMPROVED PROMPT ---
+
+                # Convert Markdown → HTML
+                markdown_text = response.text if hasattr(response, "text") else "No analysis available"
+                html_output = markdown.markdown(markdown_text, extensions=["fenced_code", "tables"])
+
+=======
                 # Call Gemini
                 response = gemini_model.generate_content([
                     {"role": "user", "parts": [
@@ -545,17 +617,20 @@ Include appropriate emojis for better readability."""
                 ])
 
                 # Default result
+>>>>>>> a7848b0224c3bdf3e698f5c7ad93dae89bc58794
                 result_data = {
-                    'crop': 'Unknown',
-                    'status': 'Unknown',
-                    'disease': 'None detected',
-                    'confidence': 'N/A',
-                    'recommendations': [],
-                    'notes': '',
-                    'image': img_path,
-                    'status_icon': '❓'
+                    "html_output": html_output,
+                    "image": img_path,
+                    "original_filename": filename
                 }
 
+<<<<<<< HEAD
+                return render_template("interactive_result.html", **result_data)
+
+            except Exception as e:
+                # Log the full exception for debugging in a real application
+                print(f"Error during analysis: {e}")
+=======
                 if response.text:
                     analysis = response.text
                     result_data['raw_analysis'] = analysis  # keep raw output for debugging
@@ -583,17 +658,17 @@ Include appropriate emojis for better readability."""
                 # Clean up file if error occurs
                 if os.path.exists(img_path):
                     os.remove(img_path)
+>>>>>>> a7848b0224c3bdf3e698f5c7ad93dae89bc58794
                 return render_template(
                     'error.html',
-                    error_message="Analysis failed. Please try again.",
-                    recovery_tip="Try uploading a clearer image of the crop leaves"
+                    error_message=f"Analysis failed: {str(e)}",
+                    recovery_tip="Try uploading a clearer image of the crop leaves, or a different image. The AI might be struggling with the current image."
                 )
-        else:
-            flash('AI service is currently unavailable')
-            return redirect(request.url)
 
     return render_template('detect.html')
 
+<<<<<<< HEAD
+=======
 
 # --- Helper functions ---
 
@@ -613,6 +688,7 @@ def extract_list_items(text, header):
         return [line[2:].strip() for line in section.split('\n') if line.startswith('- ')]
     return [] '''
 
+>>>>>>> a7848b0224c3bdf3e698f5c7ad93dae89bc58794
 
 @app.route('/logout')
 def logout():
